@@ -1,0 +1,53 @@
+#account-info-containers {
+  width: 50%;
+  position: relative;
+  left: 25%;
+  border: 1px solid;
+  border-top: 0px;
+  border-bottom: 0;
+  padding: 0;
+  margin: 0;
+  overflow: hidden !important;
+  height: 93vh;
+}
+
+#account-info-containers p {
+  padding: 0;
+  margin: 0;
+  font-weight: 500;
+}
+
+.account-info-container {
+  transition: 0.3s;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding: 10px 10px;
+  background-color: rgb(255, 255, 255);
+}
+
+.account-info-container:hover {
+  cursor: pointer;
+  background-color: rgb(240, 240, 240);
+}
+
+.account-info-container:nth-child(3) {
+  border-bottom: 1px solid;
+}
+
+@media only screen and (orientation: portrait) and (max-width: 600px) {
+  #account-info-containers {
+    width: 100%;
+    padding-bottom: 20%;
+    border: none;
+    left: 0;
+  }
+}
+
+@media only screen and (orientation: landscape) and (max-width: 1000px) {
+  #account-info-containers {
+    width: 100%;
+    transform: translate(0, 0);
+    position: absolute;
+    padding-bottom: 20%;
+  }
+}

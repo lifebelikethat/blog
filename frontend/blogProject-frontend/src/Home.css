@@ -1,0 +1,144 @@
+.top-buttons {
+  background-color: white;
+  width: 50%;
+  height: 50px;
+  padding: 0px;
+  margin-top: 0;
+  margin-bottom: 0;
+  border: none;
+  border-bottom: 1px solid lightgray;
+  box-shadow: 0;
+  transition: 0.35s;
+  cursor: pointer;
+  outline: none;
+}
+
+.top-buttons:hover {
+  background-color: rgb(240, 240, 240);
+  outline: none;
+}
+
+.top-buttons-selected {
+  background-color: rgb(226, 226, 226, 1);
+  width: 50%;
+  height: 50px;
+  padding: 0px;
+  margin-top: 0;
+  margin-bottom: 0;
+  border: none;
+  border-bottom: 1px solid lightgray;
+  box-shadow: 0;
+  transition: 0.5s;
+  cursor: pointer;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.blogs-container {
+  word-break: break-all;
+  border-top: solid;
+  border-width: 1px 0px;
+  border-color: lightgray;
+  padding-top: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-family: "Segoe UI";
+  transition: 0.3s;
+  overflow-anchor: none;
+}
+
+.blogs-container:hover {
+  cursor: pointer;
+  transition: 0.3s;
+  background-color: rgb(240, 240, 240);
+}
+
+.blogs-container img {
+  width: 100%;
+  height: 100%;
+}
+
+.followingFollowers {
+  transition: 0.3s;
+}
+
+.followingFollowers:hover {
+  cursor: pointer;
+  transition: 0.3s;
+  background-color: rgb(240, 240, 240);
+}
+
+.blogs-container .small-link:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* for home page buttons (for u and following) */
+.blogs-container:nth-child(1) {
+  padding: 0;
+  border-top: none;
+  margin-bottom: 0;
+}
+
+/* for user profile name bio */
+.blogs-container.user-profile-header {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.blogs-container:nth-child(2) {
+  margin-top: 0;
+  border-top: none;
+}
+
+.blogs-container:nth-last-child(1) {
+  height: 100vh;
+}
+
+.blogs-container:nth-last-child(1):hover {
+  cursor: default;
+  background-color: inherit;
+}
+
+.blogs-container h4 {
+  font-weight: 600;
+}
+
+#blog-container {
+  position: relative;
+  border: 1px solid;
+  border-color: lightgray;
+  width: 30%;
+  margin: 0;
+  left: 35%;
+  height: auto;
+
+  /* transform: translate(120%, 0%); */
+  padding: 0px;
+  border-bottom: none;
+  border-top: none;
+}
+
+/* for mobile phones */
+
+@media only screen and (orientation: portrait) and (max-width: 600px) {
+  #blog-container {
+    width: 100%;
+    padding-bottom: 20%;
+    border: none;
+    left: 0;
+  }
+}
+
+@media only screen and (orientation: landscape) and (max-width: 1000px) {
+  #blog-container {
+    width: 100%;
+    transform: translate(0, 0);
+    position: absolute;
+    padding-bottom: 20%;
+  }
+
+  .blogs-container:nth-child(1) {
+    padding-top: 60px;
+  }
+}
