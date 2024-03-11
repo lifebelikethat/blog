@@ -148,7 +148,7 @@ export default function Login() {
               <Grid container>
                 <Grid item xs>
                   <small>
-                    <NavLink>Forgot password?</NavLink>
+                    <NavLink to="/reset-password" end>Forgot password?</NavLink>
                   </small>
                 </Grid>
                 <Grid item>

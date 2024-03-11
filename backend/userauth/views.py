@@ -1,4 +1,7 @@
 import secrets
+from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
+from django.conf import settings
 from .serializers import (
         UserSerializer,
         RegisterUserSerializer,
@@ -6,6 +9,7 @@ from .serializers import (
         GenerateResetPasswordTokenSerializer,
         ResetPasswordSerializer,
         ChangePasswordSerializer,
+        ResendConfirmEmailSerializer,
         )
 from rest_framework.response import Response
 from rest_framework import generics
@@ -17,16 +21,6 @@ user_model = get_user_model()
 
 
 # Create your views here.
-class UserList(generics.ListAPIView):
-    serializer_class = UserSerializer
-    queryset = user_model.objects.all()
-
-
-class UserDetail(generics.RetrieveAPIView):
-    serializer_class = UserSerializer
-    queryset = user_model.objects.all()
-    lookup_field = 'username'
-    lookup_url_kwarg = 'username'
 
 
 class RegisterUser(generics.CreateAPIView):
@@ -41,14 +35,12 @@ class ConfirmEmail(generics.CreateAPIView):
         serializer = ConfirmEmailSerializer(data=request.data)
 
         if serializer.is_valid():
-            username = serializer.data.get('username')
             token = serializer.data.get('token')
 
             try:
-                user = user_model.objects.get(username=username)
-
+                user = userauth_models.UserProfile.objects.get(email_confirmation_token=token).user
             except:
-                print('user not found')
+                return Response('user not found', status=404)
 
             if token == user.userprofile.email_confirmation_token:
                 user.userprofile.email_confirmation_token = ''
@@ -57,7 +49,31 @@ class ConfirmEmail(generics.CreateAPIView):
                 user.save()
                 user.userprofile.save()
 
+            else:
+                return Response('Invalid URL')
+
             return Response('email verified')
+        return Response(status=400)
+
+
+class ResendConfirmEmail(APIView):
+    def post(self, request):
+        serializer = ResendConfirmEmailSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.data.get('email')
+            user = get_object_or_404(userauth_models.UserProfile, email=email).user
+
+            if user.email and user.email == user.userprofile.email:
+                return Response("email already verified", status=400)
+            token = user.userprofile.email_confirmation_token
+            send_mail(
+                    'confirmation email',
+                    f'http://127.0.0.1:5173/confirm/{token}/',
+                    'settings.EMAIL_HOST_USER',
+                    [email],
+                    fail_silently=True,
+                    )
+            return Response('email sent')
         return Response(status=400)
 
 
@@ -72,17 +88,20 @@ class GenerateResetPasswordToken(generics.CreateAPIView):
 
             try:
                 user = user_model.objects.get(email=email)
-
             except:
                 return Response('user not found', status=400)
 
-            """
-            send email
-            """
-
-            token = secrets.token_urlsafe(64)
+            token = secrets.token_hex(32)
             user.userprofile.password_reset_token = token
             user.userprofile.save()
+
+            send_mail(
+                    "reset password",
+                    f"http://127.0.0.1:5173/reset-password/{token}/",
+                    "Don't Reply <noreply@domain.example",
+                    [email,],
+                    fail_silently=False,
+                    )
 
             return Response('Email sent')
         return Response('No user with that email exists', status=400)
@@ -96,21 +115,26 @@ class ResetPassword(generics.GenericAPIView):
 
         if serializer.is_valid():
             token = serializer.data.get('password_reset_token')
-            password = serializer.data.get('password')
+            password = serializer.data.get('new_password')
 
             try:
-                user = user_model.userprofile.objects.get(password_reset_token=token)
+                userprofile = userauth_models.UserProfile.objects.get(password_reset_token=token)
+                user = userprofile.user
             except:
                 return Response('Invalid URL', status=400)
 
             user.set_password(password)
-            user.userprofile.password_reset_token = ''
+            userprofile.password_reset_token = ''
 
             user.save()
-            user.userprofile.save()
+            userprofile.save()
+
+            print('password changed')
+            print(password)
+            print(user.password)
 
             return Response('password changed', status=200)
-        return Response('invalid password', status=400)
+        return Response(serializer.errors, status=400)
 
 
 class ChangePassword(generics.GenericAPIView):
@@ -120,13 +144,12 @@ class ChangePassword(generics.GenericAPIView):
         serializer = ChangePasswordSerializer(data=request.data)
 
         if serializer.is_valid():
-            username = serializer.data.get('username')
             password = serializer.data.get('password')
             password1 = serializer.data.get('password1')
             password2 = serializer.data.get('password2')
 
             try:
-                user = user_model.objects.get(username=username)
+                user = request.user
             except:
                 return Response('user not found', status=400)
 

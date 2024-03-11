@@ -16,6 +16,5 @@ class Blog(models.Model):
     author = models.ForeignKey(user_model, on_delete=models.CASCADE)
     content = models.CharField(max_length=800, blank=False)
     image = models.ImageField(_("Image"), upload_to=upload_to, default='posts/default.jpg')
-    likes = models.ManyToManyField(userauth.UserProfile, blank=True, related_name='liked_blogs')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True)

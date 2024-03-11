@@ -31,7 +31,7 @@ const Account = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    relogUser({ username: user.username });
+    relogUser({ username: user.username, password: formData.password });
   };
 
   if (!setting)
@@ -93,6 +93,7 @@ const Account = () => {
                 value={formData.password}
                 type="password"
                 fullWidth
+                autoFocus
               ></TextField>
 
               <Button

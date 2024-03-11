@@ -8,8 +8,9 @@ class UserProfile(models.Model):
     username = models.CharField(max_length=32)
     display_name = models.CharField(max_length=32)
     email = models.EmailField(max_length=32, default='')
-    email_confirmation_token = models.CharField(max_length=64, default='')
-    password_reset_token = models.CharField(max_length=64, default='')
+    email_confirmation_token = models.CharField(max_length=128, default='')
+    password_reset_token = models.CharField(max_length=128, default='')
+    liked_blogs = models.ManyToManyField('main.Blog', blank=True, related_name='likes')
     relationships = models.ManyToManyField(
             'self',
             through='Relationship',
@@ -59,7 +60,7 @@ class UserProfile(models.Model):
         followers_queryset = self.get_related_to(1)
         return followers_queryset
 
-    def get_blocked(self, to_person):
+    def get_blocked(self):
         blocked_queryset = self.get_relationship(2)
         return blocked_queryset
 

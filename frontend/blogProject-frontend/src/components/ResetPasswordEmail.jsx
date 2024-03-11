@@ -84,7 +84,7 @@ export default function ResetPasswordEmail() {
     localStorage.setItem("resetPasswordDisabled", true);
 
     axiosInstance
-      .put("api-auth/generate-password-token/", { email: formData.email })
+      .post("api-auth/reset-password-email/", { email: formData.email })
       .then((response) => {
         handleDisable(60);
 

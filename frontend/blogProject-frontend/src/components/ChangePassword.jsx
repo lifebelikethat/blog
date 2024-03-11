@@ -49,6 +49,7 @@ export default function ChangePassword() {
     setFormError,
   } = useAuth();
 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -56,7 +57,7 @@ export default function ChangePassword() {
       .post(
         "api-auth/change-password/",
         {
-          password0: formData.password0,
+          password: formData.password0,
           password1: formData.password1,
           password2: formData.password2,
         },

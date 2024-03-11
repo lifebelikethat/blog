@@ -7,13 +7,12 @@ import { useAuth } from "../contexts/AuthContext";
 const AccountSettings = (props) => {
   const verified = props.verified;
   const formData = props.formData;
-  const password = props.password;
   const blockedUsers = props.blockedUsers;
 
   const setting = useParams().setting;
   const [emailMessage, setEmailMessage] = useState("");
   const [disabled, setDisabled] = useState(false);
-  const { setFormData, navigate, user, userToken, relogUser, userBlockedList } =
+  const { setFormData, navigate, user, userToken, relogUser, userBlockedList, getUserInfo } =
     useAuth();
 
   const [blocked, setBlocked] = useState();
@@ -87,7 +86,7 @@ const AccountSettings = (props) => {
     if (setting === "username") {
       axiosInstance
         .put(
-          `api-main/users/${user.username}/`,
+          `api-main/user/`,
           {
             username: formData.username,
           },
@@ -100,8 +99,8 @@ const AccountSettings = (props) => {
         .then((response) => {
           relogUser({
             username: formData.username,
+            password: formData.password,
           });
-          console.log(response);
 
           navigate("/account");
         })
@@ -109,15 +108,14 @@ const AccountSettings = (props) => {
     } else if (setting === "email") {
       console.log("sending email");
       axiosInstance
-        .post(
-          "api-auth/change-email/",
+        .put(
+          "api-main/user/",
           { email: formData.email },
           {
             headers: { Authorization: user ? `JWT ${userToken.access}` : null },
           }
         )
         .then((response) => {
-          console.log(response);
           setDisabled(false);
           setEmailMessage("Check your inbox to confirm your email");
         })
@@ -150,6 +148,7 @@ const AccountSettings = (props) => {
               name="username"
               onChange={handleChange}
               fullWidth
+              autoFocus
             />
 
             <Button
@@ -175,8 +174,9 @@ const AccountSettings = (props) => {
               onChange={handleChange}
               name="email"
               fullWidth
+              autoFocus
             />
-            <small>{emailMessage}</small>
+            <small style={{"color": "red"}}>{emailMessage}</small>
 
             <Button
               onClick={handleSubmit}

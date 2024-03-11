@@ -26,9 +26,12 @@ SECRET_KEY = 'django-insecure-1xy$7@#gsnd4e*-5t^tubw%n2*qhl$s%q471a#0@6!zowqm*8#
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
-
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'ianharoldong03@gmail.com'
+EMAIL_HOST_PASSWORD = 'vssv abjc fgvo hsbc'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # Application definition
 
@@ -39,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
     'rest_framework_simplejwt',
     'rest_framework',
     'corsheaders',
@@ -99,11 +103,12 @@ AUTHENTICATION_BACKENDS = [
 
 REST_FRAMEWORK = {
         'DEFAULT_AUTHENTICATION_CLASSES': (
-            'rest_framework.authentication.SessionAuthentication',
+            'rest_framework.authentication.TokenAuthentication',
             'rest_framework_simplejwt.authentication.JWTAuthentication',
             ),
         'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-        'PAGE_SIZE': 20
+        'PAGE_SIZE': 20,
+        'DEFAULT_FILTER_BACKENDS': ['rest_framework.filters.OrderingFilter'],
 
         }
 
@@ -145,19 +150,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 CORS_ALLOWED_ORIGINS = [
-        'http://localhost',
         'http://127.0.0.1',
-        'http://127.0.0.1:5173',
+        'http://localhost',
         'http://0.0.0.0',
         ]
 
-ALLOWED_HOSTS = ['api', '127.0.0.1']
+ALLOWED_HOSTS = ['api', '127.0.0.1', 'localhost', '54.206.254.175',]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -167,8 +174,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": False,
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
 
     "ALGORITHM": "HS256",
@@ -179,7 +186,7 @@ SIMPLE_JWT = {
     "JWK_URL": None,
     "LEEWAY": 0,
 
-    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_HEADER_TYPES": ("Bearer", "JWT",),
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",

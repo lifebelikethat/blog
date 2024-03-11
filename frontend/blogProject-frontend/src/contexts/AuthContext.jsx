@@ -18,6 +18,8 @@ export function AuthProvider(props) {
     password1: "",
     password2: "",
   });
+  console.log("form data -----------------------------------------")
+  console.log(formData)
 
   const [formError, setFormError] = useState({
     email: false,
@@ -56,8 +58,7 @@ export function AuthProvider(props) {
           password: formData.password,
         })
         .then((response) => {
-          console.log("logged in");
-          navigate("/");
+          console.log(response)
           setInvalidAccount(false);
           setFormData((prevData) => {
             return { ...prevData, email: "", username: "", password: "" };
@@ -67,7 +68,8 @@ export function AuthProvider(props) {
             localStorage.setItem("userToken", JSON.stringify(response.data));
             setUserToken(response.data);
             setUser(jwtDecode(response.data.access));
-            navigate("/");
+
+            if (response.data.email != "") navigate("/");
           } else {
             alert("something went wrong");
           }
@@ -94,14 +96,23 @@ export function AuthProvider(props) {
     localStorage.removeItem("authToken");
   };
 
+  const getUserInfo = (data) => {
+    axiosInstance
+      .get("api-main/user/", {headers: data})
+      .then((response) => {
+        if (response.status === 200) {
+            console.log(response.data)
+        }
+      })
+  }
+
   const relogUser = (data) => {
     console.log("relogged user");
     axiosInstance
-      .post("api/token/custom/", data)
+      .post("api/token/", data)
       .then((response) => {
         if (response.status === 200) {
           localStorage.setItem("userToken", JSON.stringify(response.data));
-          console.log(jwtDecode(response.data.access));
           setUserToken(response.data);
           setUser(jwtDecode(response.data.access));
           setVerified(true);
@@ -123,7 +134,7 @@ export function AuthProvider(props) {
 
   const updateToken = () => {
     console.log("updated token");
-
+    console.log(userToken)
     if (userToken != null) {
       axiosInstance
         .post(
@@ -138,8 +149,8 @@ export function AuthProvider(props) {
         )
         .then((response) => {
           if (response.status === 200) {
-            console.log(response.data.access);
             localStorage.setItem("userToken", JSON.stringify(response.data));
+            console.log(response.data)
             setUserToken(response.data);
             setUser(jwtDecode(response.data.access));
             console.log(jwtDecode(response.data.access));
@@ -156,7 +167,7 @@ export function AuthProvider(props) {
   const getUserFollowing = (username, page) => {
     console.log("getUserFollowing");
     axiosInstance
-      .get(`api-main/users/${username}/following/?page=${page}`)
+      .get(`api-main/userprofiles/${username}/following/?page=${page}`)
       .then((response) => {
         let userFollowingListUsername = [];
 
@@ -183,7 +194,7 @@ export function AuthProvider(props) {
 
   const getUserBlocked = (username, page) => {
     axiosInstance
-      .get(`api-main/users/${username}/blocked/?page=${page}`)
+      .get(`api-main/userprofiles/${username}/blocked/?page=${page}`)
       .then((response) => {
         setLoading(false);
         let userBlockedListUsername = [];
@@ -241,6 +252,7 @@ export function AuthProvider(props) {
     relogUser,
     invalidAccount,
     updateToken,
+    getUserInfo,
     user,
     userToken,
     setUser,
@@ -255,6 +267,8 @@ export function AuthProvider(props) {
     verified,
     setVerified,
   };
+
+  if (user) console.log(user.username)
 
   return (
     <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>

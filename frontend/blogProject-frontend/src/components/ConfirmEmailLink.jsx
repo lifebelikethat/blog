@@ -9,7 +9,7 @@ export default function ConfirmEmailLink() {
 
   useEffect(() => {
     axiosInstance
-      .post(`api-auth/confirm/${emailToken}/`)
+      .post(`api-auth/confirm-email/`, {"token": emailToken})
       .then((response) => {
         console.log(response);
         navigate("/");

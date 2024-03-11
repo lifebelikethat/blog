@@ -46,9 +46,9 @@ export default function ResetPassword() {
     console.log(formData);
 
     axiosInstance
-      .post(`api-auth/reset-password/${emailToken}/`, {
-        password1: formData.password1,
-        password2: formData.password2,
+      .post(`api-auth/reset-password/`, {
+        password_reset_token: emailToken,
+        new_password: formData.password2,
       })
       .then((response) => {
         navigate("/login");

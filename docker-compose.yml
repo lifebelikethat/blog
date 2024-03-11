@@ -2,21 +2,22 @@ version: '3'
 
 services:
   backend:
-    restart: always
     build:
       context: ./backend
     volumes:
       - ./backend:/django
       - static_files:/django/staticfiles
+      - media_files:/django/media
     command: gunicorn core.wsgi --bind 0.0.0.0:8000 --reload
-    ports:
-      - "8000:8000"
+    expose:
+      - 8000
+
   frontend:
-    restart: always
     build:
       context: ./frontend/blogProject-frontend
     volumes:
       - react_build:/react/dist
+
   nginx:
     build:
       context: ./nginx
@@ -26,11 +27,12 @@ services:
       - ./nginx/conf.d/:/etc/nginx/conf.d/
       - react_build:/var/www/react
       - static_files:/home/app/staticfiles
+      - media_files:/home/app/media
     depends_on:
       - frontend
       - backend
-    restart: always
 
 volumes:
   react_build:
   static_files:
+  media_files:

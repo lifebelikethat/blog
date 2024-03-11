@@ -42,7 +42,7 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function Register() {
-  const { formData, setFormData, formError, setFormError } = useAuth();
+  const { formData, setFormData, formError, setFormError, loginUser } = useAuth();
   const [sent, setSent] = useState(false);
   const [counter, setCounter] = useState(
     localStorage.getItem("registerCounter")
@@ -99,6 +99,7 @@ export default function Register() {
         setFormError((previousState) => {
           return { ...previousState, email: "" };
         });
+        loginUser()
         navigate("/confirm");
       })
       .catch((error) => {

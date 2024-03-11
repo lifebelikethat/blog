@@ -103,7 +103,7 @@ const BlogList = (props) => {
   };
 
   // setLiked([array of blog_id of liked posts by logged in user])
-  // http://127.0.0.1:8000/api-main/users/<username>/
+  // http://127.0.0.1:8000/api-main/userprofiles/<username>/
 
   const getUserLiked = () => {
     if (user) {
@@ -133,7 +133,7 @@ const BlogList = (props) => {
   const sendLikePut = (followList) => {
     axiosInstance
       .put(
-        `api-main/users/${user.username}/`,
+        `api-main/userprofiles/${user.username}/`,
         {
           liked_blogs: followList,
         },
@@ -153,10 +153,11 @@ const BlogList = (props) => {
     if (user) {
       const getUserLikedPosts = () => {
         axiosInstance
-          .get(`api-main/users/${user.username}/`, {
+          .get(`api-main/userprofiles/${user.username}/`, {
             headers: { "Content-Type": "application-json" },
           })
           .then((response) => {
+            console.log(response.data)
             response.data.liked_blogs.push(blog_id);
 
             sendLikePut(response.data.liked_blogs);
@@ -184,7 +185,7 @@ const BlogList = (props) => {
     if (user) {
       const getUserLikedPosts = () => {
         axiosInstance
-          .get(`api-main/users/${user.username}/`, {
+          .get(`api-main/userprofiles/${user.username}/`, {
             headers: {
               "Content-Type": "application-json",
               Authorization: `JWT ${userToken.access}`,
@@ -527,18 +528,19 @@ const BlogList = (props) => {
                 <small>{Math.floor(blog.time_since / 3600)}h</small>
               )}
               <p>{blog.content}</p>
-              <img
-                onClick={() => {
-                  document.body.style.overflowY = "enabled";
-                  setImageURL(blog.image);
-                  setImageOpen(true);
-                }}
-                src={
-                  blog.image === "http://127.0.0.1:8000/media/posts/default.jpg"
-                    ? null
-                    : blog.image
-                }
+
+            {
+              blog.image.substr(-11) === "default.jpg"
+              ? null
+              : <img
+              onClick={() => {
+                document.body.style.overflowY = "enabled";
+                setImageURL(blog.image);
+                setImageOpen(true);
+              }}
+              src={blog.image}
               />
+            }
 
               {liked.indexOf(blog.id) != -1 ? (
                 <IconButton

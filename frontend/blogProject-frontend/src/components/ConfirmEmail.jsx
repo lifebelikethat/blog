@@ -76,7 +76,7 @@ export default function ConfirmEmail() {
     handleDisable(5);
 
     axiosInstance
-      .post("api-auth/resend-email/", {
+      .post("api-auth/resend-confirm-email/", {
         email: formData.email,
       })
       .then((response) => {
