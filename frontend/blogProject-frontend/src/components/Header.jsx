@@ -74,24 +74,39 @@ function Header() {
 
   const handlePostData = (event) => {
     event.preventDefault();
-    toggleModal();
+    let data = {};
+    
+    if (postData.image) {
+      data = {
+        content: postData.content,
+        image: postData.image,
+        author: user.user_id,
+      }
+    } else {
+      data = {
+        content: postData.content,
+        author: user.user_id,
+      }
+    }
+
     axiosInstance
       .post(
         "api-main/blogs/",
         {
           content: postData.content,
-          image: postData.image,
           author: user.user_id,
         },
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "application/json",
             Authorization: `JWT ${userToken.access}`,
           },
         }
       )
       .then((response) => {
         console.log(response);
+        toggleModal();
+        window.location.reload();
       })
       .catch((error) => {
         console.log(error);
@@ -173,26 +188,20 @@ function Header() {
                     onChange={handlePostChange}
                   />
                   <hr />
-
-                  <form onSubmit={handlePostData}>
-                    <Button
-                      variant="contained"
-                      sx={{ my: 1, mx: 1.5 }}
-                      style={{
-                        borderRadius: "25px",
-                        float: "right",
-                        marginRight: 0,
-                      }}
-                      onClick={() => {
-                        window.location.reload(false);
-                      }}
-                      className="btn-modal"
-                      type="submit"
-                      disabled={postData.content.length > 0 ? false : true}
-                    >
-                      Post
-                    </Button>
-                  </form>
+                <Button
+                variant="contained"
+                sx={{ my: 1, mx: 1.5 }}
+                style={{
+                  borderRadius: "25px",
+                    float: "right",
+                    marginRight: 0,
+                }}
+                onClick={handlePostData}
+                className="btn-modal"
+                disabled={postData.content.length > 0 ? false : true}
+                >
+                Post
+                </Button>
                 </div>
               </div>
             ) : null}

@@ -473,7 +473,7 @@ const BlogList = (props) => {
           !userBlockedList.includes(blog.author.username) && !loading ? (
             <div key={blog.id} border="true" className="blogs-container">
               {/* blog options dropdown button */}
-
+      
               <Button
                 sx={{ my: 1, mx: 1.5, ":hover": { bgcolor: "inherit" } }}
                 id="dropdown"
@@ -494,7 +494,6 @@ const BlogList = (props) => {
                 blogid={blog.id}
                 onClick={(event) => {
                   setAnchor(event.target);
-
                   setOpen(true);
                 }}
               >
@@ -527,7 +526,7 @@ const BlogList = (props) => {
               ) : (
                 <small>{Math.floor(blog.time_since / 3600)}h</small>
               )}
-              <p>{blog.content}</p>
+              <pre>{blog.content}</pre>
 
             {
               blog.image.substr(-11) === "default.jpg"

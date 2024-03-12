@@ -47,6 +47,10 @@
   overflow-anchor: none;
 }
 
+.blogs-container pre {
+    white-space: normal;
+}
+
 .blogs-container:hover {
   cursor: pointer;
   transition: 0.3s;

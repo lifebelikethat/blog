@@ -19,6 +19,10 @@ class BlogSerializer(serializers.ModelSerializer):
     class Meta:
         model = home.Blog
         fields = ('id', 'author', 'content', 'image', 'likes', 'created', 'updated', 'time_since')
+        extra_kwargs = {
+                'char': {'trim_whitespace': False},
+                'text': {'trim_whitespace': False},
+                }
 
 
 class CreateBlogSerializer(serializers.ModelSerializer):

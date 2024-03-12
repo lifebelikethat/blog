@@ -15,6 +15,6 @@ def upload_to(instance, filename):
 class Blog(models.Model):
     author = models.ForeignKey(user_model, on_delete=models.CASCADE)
     content = models.CharField(max_length=800, blank=False)
-    image = models.ImageField(_("Image"), upload_to=upload_to, default='posts/default.jpg')
+    image = models.ImageField(_("Image"), upload_to=upload_to, default='posts/default.jpg',)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True)
