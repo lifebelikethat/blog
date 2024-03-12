@@ -48,7 +48,8 @@
 }
 
 .blogs-container pre {
-    white-space: normal;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .blogs-container:hover {
