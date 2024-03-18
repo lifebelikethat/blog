@@ -138,12 +138,8 @@
 @media only screen and (orientation: landscape) and (max-width: 1000px) {
   #blog-container {
     width: 100%;
-    transform: translate(0, 0);
-    position: absolute;
+    border: none;
+    left: 0;
     padding-bottom: 20%;
-  }
-
-  .blogs-container:nth-child(1) {
-    padding-top: 60px;
   }
 }

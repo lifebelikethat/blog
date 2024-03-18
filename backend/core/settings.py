@@ -162,6 +162,8 @@ CORS_ALLOWED_ORIGINS = [
         'http://127.0.0.1',
         'http://localhost',
         'http://0.0.0.0',
+        'http://127.0.0.1:5173',
+        'http://127.0.0.1:8000',
         ]
 
 ALLOWED_HOSTS = ['api', '127.0.0.1', 'localhost', '54.206.254.175',]
@@ -173,7 +175,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,

@@ -46,6 +46,8 @@ function Header() {
   const [modal, setModal] = useState(false);
   const [anchor, setAnchor] = useState(null);
   const [postData, setPostData] = useState({ content: "", image: null });
+  const [postButtonDisabled, setPostButtonDisabled] = useState(true);
+  const [postErrorMessage, setPostErrorMessage] = useState("");
   const open = Boolean(anchor);
 
   const inputref = useRef();
@@ -59,30 +61,58 @@ function Header() {
   };
 
   const toggleModal = () => {
-    setModal(!modal);
+    setModal(() => {
+      if (!modal == false) setPostData({ content: "", image: null });
+      return !modal;
+    });
+    
   };
 
   const handlePostChange = (event) => {
     event.preventDefault();
 
     if (event.target.name === "content") {
-      setPostData({ content: event.target.value, image: postData.image });
+      setPostData(() => {
+        if (postData.image != null && postData.image.size > 2000000) {
+          setPostButtonDisabled(true);
+        } else if (postData.image == null && event.target.value.length < 0) {
+          setPostButtonDisabled(true);
+        } else {
+          setPostButtonDisabled(false);
+        }
+        return { content: event.target.value, image: postData.image }
+      });
     } else if (event.target.name === "image") {
-      setPostData({ content: postData.content, image: event.target.files[0] });
-    }
+      setPostData(() => { 
+        if (postData.content.length < 1) {
+          setPostButtonDisabled(true);
+        } else if (event.target.files[0].size > 2000000) {
+          setPostButtonDisabled(true);
+          setPostErrorMessage("maximum size of 2 mb.")
+        } else {
+          setPostButtonDisabled(false);
+          setPostErrorMessage("");
+        }
+        return { content: postData.content, image: event.target.files[0] }
+      });
+    };
   };
 
   const handlePostData = (event) => {
     event.preventDefault();
     let data = {};
+    console.log(postData.image)
     
-    if (postData.image) {
+    if (postData.image != null) {
+      console.log('not null')
+      console.log(postData.image)
       data = {
         content: postData.content,
         image: postData.image,
         author: user.user_id,
       }
     } else {
+      console.log('null')
       data = {
         content: postData.content,
         author: user.user_id,
@@ -94,11 +124,12 @@ function Header() {
         "api-main/blogs/",
         {
           content: postData.content,
+          image: postData.image,
           author: user.user_id,
         },
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data",
             Authorization: `JWT ${userToken.access}`,
           },
         }
@@ -188,6 +219,7 @@ function Header() {
                     onChange={handlePostChange}
                   />
                   <hr />
+                  <small style={{color: "red",}}>{postErrorMessage}</small>
                 <Button
                 variant="contained"
                 sx={{ my: 1, mx: 1.5 }}
@@ -198,7 +230,7 @@ function Header() {
                 }}
                 onClick={handlePostData}
                 className="btn-modal"
-                disabled={postData.content.length > 0 ? false : true}
+                disabled={postButtonDisabled}
                 >
                 Post
                 </Button>

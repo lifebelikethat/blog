@@ -158,6 +158,7 @@ export function AuthProvider(props) {
         })
         .catch((error) => {
           console.log(error);
+          logoutUser();
         });
     }
 

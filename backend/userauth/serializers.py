@@ -31,8 +31,24 @@ class UserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         validated_data_fields = list(validated_data.keys())
-        validated_data_fields.remove('email')
         userprofile_fields = [field.name for field in UserProfile._meta.get_fields()]
+
+        if 'email' in validated_data_fields:
+            validated_data_fields.remove('email')
+            email = validated_data.get('email')
+            if email == instance.email:
+                raise serializers.ValidationError({"email": "choose another email"})
+
+            token = secrets.token_urlsafe(32)
+            instance.userprofile.email = email
+            instance.userprofile.email_confirmation_token = token
+            send_mail(
+                    "change email",
+                    f'http://127.0.0.1:5173/confirm/{token}/',
+                    "settings.EMAIL_HOST_USER",
+                    [email,],
+                    fail_silently=False,
+                    )
 
         for field in validated_data_fields:
             setattr(instance, field, validated_data.get(field))
@@ -41,22 +57,6 @@ class UserSerializer(serializers.ModelSerializer):
             if field in userprofile_fields:
                 user_field_value = getattr(instance, field)
                 setattr(instance.userprofile, field, user_field_value)
-
-        token = secrets.token_urlsafe(32)
-        email = validated_data.get('email')
-
-        if email == instance.email:
-            raise serializers.ValidationError({"email": "choose another email"})
-
-        instance.userprofile.email = email
-        instance.userprofile.email_confirmation_token = token
-        send_mail(
-                "change email",
-                f'http://127.0.0.1:5173/confirm/{token}/',
-                "settings.EMAIL_HOST_USER",
-                [email,],
-                fail_silently=False,
-                )
 
         instance.save()
         instance.userprofile.save()
