@@ -24,6 +24,7 @@ function Relationships() {
 
   const [followButton, setFollowButton] = useState([]);
   const handleFollow = (event) => {
+    event.preventDefault();
     if (!followButton.includes(event.target.value)) {
       follow(user.username, event.target.value);
     } else {
@@ -47,9 +48,7 @@ function Relationships() {
         }
       )
       .then((response) => {
-        console.log(response);
         setFollowButton((prev) => {
-          console.log([...prev, to]);
           return [...prev, to];
         });
       })
@@ -66,9 +65,7 @@ function Relationships() {
         },
       })
       .then((response) => {
-        console.log(response);
         setFollowButton((prev) => {
-          console.log(prev.filter((userStr) => userStr != to));
           return prev.filter((userStr) => userStr != to);
         });
       })
@@ -78,22 +75,25 @@ function Relationships() {
   };
   const getUserFollowing = (username) => {
     axiosInstance
-      .get(`api-main/users/${username}/following/`)
+      .get(`api-main/userprofiles/${username}/following/`)
       .then((response) => {
         setLoading(false);
-        console.log("feched from", urlStatus);
+        // if not logged in
+        if (!user) {
+          setUserList(response.data.results)
+        }
 
         // if viewing your own user profile
-        if (urlUsername === user.username) {
+        else if (urlUsername === user.username) {
           setUserList(response.data.results);
           setCurrentUserFollowingList(response.data.results);
         }
 
         // if viewing a different user profile
-        if (username != user.username && urlUsername != user.username) {
+        else if (username != user.username && urlUsername != user.username) {
           setUserList(response.data.results);
           getUserFollowing(user.username);
-        } else {
+        }  {
           setCurrentUserFollowingList(response.data.results);
           response.data.results.map((userResult) => {
             setFollowButton((prev) => {
@@ -113,14 +113,10 @@ function Relationships() {
       });
   };
 
-  console.log(followButton);
-
   const getUserFollowers = (username) => {
     axiosInstance
-      .get(`api-main/users/${username}/followers/`)
+      .get(`api-main/userprofiles/${username}/followers/`)
       .then((response) => {
-        console.log("fetched from", urlStatus);
-        console.log(response.data.results);
         setUserList(response.data.results);
       })
       .catch((error) => {
@@ -130,9 +126,8 @@ function Relationships() {
 
   const getUserBlocked = (username) => {
     axiosInstance
-      .get(`api-main/users/${username}/blocked/`)
+      .get(`api-main/userprofiles/${username}/blocked/`)
       .then((response) => {
-        console.log("fetched from", urlStatus);
         setCurrentUserBlockedList(response.data.results);
       })
       .catch((error) => {
@@ -149,7 +144,6 @@ function Relationships() {
     selected === 1
       ? getUserFollowing(urlUsername)
       : getUserFollowers(urlUsername);
-    console.log(userList);
 
     const fetchInterval = setInterval(() => {
       selected === 2
@@ -232,9 +226,6 @@ function Relationships() {
                       value={userListUser.username}
                       className="btn-modal"
                       disableElevation={true}
-                      onClick={(event) => {
-                        user ? handleFollow(event) : null;
-                      }}
                     >
                       {followButton.includes(userListUser.username)
                         ? "following"

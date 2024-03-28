@@ -71,8 +71,6 @@ function Home() {
         },
       })
       .then((response) => {
-        console.log('response')
-        console.log(response)
         setNextPage((prevPage) => {
           setCurrentPage(page);
 
@@ -81,9 +79,8 @@ function Home() {
             : page;
         });
         setLoading(false);
-        console.log("fetched from url", page);
-
-        // pages loadeded
+        // 
+        // pages loaded
         setLoadedBlogPages((loadedPages) => {
           if (!loadedPages.includes(page)) {
             loadedPages.push(page);
@@ -151,7 +148,6 @@ function Home() {
 
   useEffect(() => {
     if (nextPage) getBlogs(nextPage);
-    console.log("bottom page");
   }, [bottomIsVisible]);
 
   useEffect(() => {
@@ -181,7 +177,6 @@ function Home() {
   return (
     <div id="header">
       <div id="blog-container">
-        {!loading ? (
           <div className="blogs-container">
             <button
               className={
@@ -228,7 +223,6 @@ function Home() {
               </button>
             )}
           </div>
-        ) : null}
         {!loading ? (
           <BlogList blogList={blogList} likeCount={likeCount} />
         ) : null}

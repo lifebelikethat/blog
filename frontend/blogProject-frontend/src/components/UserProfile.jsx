@@ -67,8 +67,11 @@ export default function UserProfile() {
         headers: { "content-type": "application/json" },
       })
       .then((response) => {
-        console.log("fetched");
+        if (response.data.results.length > 0) {
+          setLoading(false)
+        }
         setCurrentPage(nextPage);
+        if (response.data.results == []) return null;
 
         response.data.next
           ? loadedBlogPages.push(response.data.next.slice(-6))
@@ -101,8 +104,6 @@ export default function UserProfile() {
             );
           }
         });
-
-        setLoading(false);
       })
 
       .catch((error) => {
@@ -112,6 +113,8 @@ export default function UserProfile() {
 
   const handleFollow = () => {
     setFollowButtonText(!followButtonText);
+
+    console.log(user)
 
     // followButtonText = true => following
     if (followButtonText) {
@@ -155,7 +158,7 @@ export default function UserProfile() {
 
   const getUserFollowing = (username, page) => {
     axiosInstance
-      .get(`api-main/users/${username}/following/?page=${page}`)
+      .get(`api-main/userprofiles/${username}/following/?page=${page}`)
       .then((response) => {
         if (username === user.username) {
           setUserFollowingList((prev) => {
@@ -198,7 +201,7 @@ export default function UserProfile() {
 
   const getUserFollowers = (username, page) => {
     axiosInstance
-      .get(`api-main/users/${username}/followers/?page=${page}`)
+      .get(`api-main/userprofiles/${username}/followers/?page=${page}`)
       .then((response) => {
         if (username === user.username) {
           if (response.data.next) {
@@ -231,6 +234,11 @@ export default function UserProfile() {
     setOpen(!open);
   };
 
+  const handleRedirect = () => {
+    if (!user) navigate("/login");
+    return;
+  }
+
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
 
@@ -238,15 +246,8 @@ export default function UserProfile() {
       getBlogs(nextPage);
     }
 
-    if (user) {
-      getUserFollowing(user.username, 1);
-      getUserFollowers(user.username, 1);
-    }
-
-    if (user && urlUsername != user.username) {
-      getUserFollowers(urlUsername, 1);
-      getUserFollowing(urlUsername, 1);
-    }
+    getUserFollowers(urlUsername, 1);
+    getUserFollowing(urlUsername, 1);
   }, []);
 
   useEffect(() => {
@@ -356,6 +357,9 @@ export default function UserProfile() {
               }}
               className="btn-modal"
               disableElevation={true}
+              onClick={() => {
+                navigate('/login')
+              }}
             >
               follow
             </Button>
@@ -363,7 +367,8 @@ export default function UserProfile() {
           <small
             className="small-link"
             onClick={() => {
-              navigate(`/${urlUsername}/following/`);
+              if (!user) handleRedirect();
+              else navigate(`/${urlUsername}/following/`);
             }}
           >
             <b>{followingCount}</b> Following
@@ -372,7 +377,8 @@ export default function UserProfile() {
           <small
             className="small-link"
             onClick={() => {
-              navigate(`/${urlUsername}/followers/`);
+              if (!user) handleRedirect();
+              else navigate(`/${urlUsername}/followers/`);
             }}
             style={{ marginLeft: "20px" }}
           >
@@ -380,7 +386,7 @@ export default function UserProfile() {
           </small>
         </div>
 
-        {loading ? "loading" : <BlogList blogList={blogList} />}
+        {loading ? null: <BlogList blogList={blogList} />}
 
         {/* {!loading ? (
           blogList.map((blog, index) => {

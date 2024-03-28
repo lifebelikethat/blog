@@ -8,17 +8,20 @@ from rest_framework import viewsets
 from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 
 user_model = get_user_model()
 
 
 # Create your views here.
 class UserList(generics.ListAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = userauth_serializers.UserSerializer
     queryset = user_model.objects.all()
 
 
 class UserDetail(generics.RetrieveUpdateAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = userauth_serializers.UserSerializer
     queryset = user_model.objects.all()
     lookup_field = 'username'
@@ -42,8 +45,14 @@ class CurrentUserProfile(generics.RetrieveAPIView):
 
 
 class BlogList(viewsets.ModelViewSet):
-    queryset = home_models.Blog.objects.all()
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     ordering_fields = ['id', 'created']
+
+    def get_queryset(self):
+        author = self.kwargs.get('author')
+        if author is not None:
+            return home_models.Blog.objects.filter(author__username=author)
+        return home_models.Blog.objects.all()
 
     def get_serializer_class(self):
         if self.action == 'list':
@@ -53,6 +62,7 @@ class BlogList(viewsets.ModelViewSet):
 
 
 class BlogDetail(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = home_models.Blog.objects.all()
     lookup_url_kwarg = 'id'
 
@@ -75,6 +85,7 @@ class BlogFollowing(generics.ListAPIView):
 
 
 class UserBlogList(generics.ListCreateAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly)
     serializer_class = main_serializers.BlogSerializer
 
     def get_queryset(self):
@@ -85,11 +96,13 @@ class UserBlogList(generics.ListCreateAPIView):
 
 
 class UserProfileList(generics.ListAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly)
     queryset = userauth_models.UserProfile.objects.all()
     serializer_class = userauth_serializers.UserProfileSerializer
 
 
 class UserProfileDetail(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = userauth_serializers.UserProfileSerializer
     queryset = userauth_models.UserProfile.objects.all()
     lookup_url_kwarg = 'username'
@@ -103,6 +116,7 @@ class UserProfileDetail(viewsets.ModelViewSet):
 
 
 class UserProfileFollowingList(generics.ListAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = userauth_serializers.UserProfileSerializer
 
     def get_queryset(self):
@@ -111,6 +125,7 @@ class UserProfileFollowingList(generics.ListAPIView):
 
 
 class UserProfileFollowerList(generics.ListAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = userauth_serializers.UserProfileSerializer
 
     def get_queryset(self):
@@ -119,6 +134,7 @@ class UserProfileFollowerList(generics.ListAPIView):
 
 
 class UserProfileBlockedList(generics.ListAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = userauth_serializers.UserProfileSerializer
 
     def get_queryset(self):
@@ -127,6 +143,7 @@ class UserProfileBlockedList(generics.ListAPIView):
 
 
 class RelationshipList(generics.ListCreateAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = main_serializers.CreateRelationshipSerializer
     queryset = userauth_models.Relationship.objects.all()
 

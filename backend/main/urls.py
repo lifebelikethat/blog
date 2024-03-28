@@ -14,6 +14,7 @@ urlpatterns = [
                 'delete': 'destroy',
                 }
             ), name='blog-detail'),
+        path('blogs/author=<str:author>/', views.BlogList.as_view({'get': 'list'})),
         path('blogs/following/', views.BlogFollowing.as_view(), name='blogs-following'),
         path('user/', views.CurrentUser.as_view(), name='current-user'),
         path('userprofile/', views.CurrentUserProfile.as_view(), name='current-userprofile'),

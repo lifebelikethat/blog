@@ -101,18 +101,14 @@ function Header() {
   const handlePostData = (event) => {
     event.preventDefault();
     let data = {};
-    console.log(postData.image)
     
     if (postData.image != null) {
-      console.log('not null')
-      console.log(postData.image)
       data = {
         content: postData.content,
         image: postData.image,
         author: user.user_id,
       }
     } else {
-      console.log('null')
       data = {
         content: postData.content,
         author: user.user_id,

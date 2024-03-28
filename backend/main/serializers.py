@@ -73,7 +73,7 @@ class CreateRelationshipSerializer(serializers.ModelSerializer):
             return None
         except:
             pass
-        
+
         if relationship is None:
             relationshipObj = userauth_models.Relationship.objects.create(
                     from_person=from_person_obj,

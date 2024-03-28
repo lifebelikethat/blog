@@ -91,7 +91,6 @@ const BlogList = (props) => {
         },
       })
       .then((response) => {
-        console.log(response);
       })
       .catch((error) => {
         console.log(error);
@@ -157,7 +156,6 @@ const BlogList = (props) => {
             headers: { "Content-Type": "application-json" },
           })
           .then((response) => {
-            console.log(response.data)
             response.data.liked_blogs.push(blog_id);
 
             sendLikePut(response.data.liked_blogs);
@@ -231,8 +229,6 @@ const BlogList = (props) => {
         { headers: { Authorization: `JWT ${userToken.access}` } }
       )
       .then(() => {
-        if (status === 1) console.log("followed");
-        else if (status === 2) console.log("blocked");
       })
       .catch((error) => {
         console.log(error);
@@ -247,7 +243,6 @@ const BlogList = (props) => {
         { headers: { Authorization: `JWT ${userToken.access}` } }
       )
       .then((response) => {
-        console.log(response);
       })
       .catch((error) => {
         console.log(error);
@@ -274,7 +269,6 @@ const BlogList = (props) => {
         headers: { Authorization: `JWT ${userToken.access}` },
       })
       .then((response) => {
-        console.log("deleted relationship");
         if (func && status) func(username, status);
       })
       .catch((error) => {
@@ -322,8 +316,6 @@ const BlogList = (props) => {
   const handlePictureClick = () => {
     setDisplayPictureClicked(!displayPictureClicked);
   };
-
-  console.log(displayPicture);
 
   useEffect(() => {
     if (userBlockedList != "") setLoading(false);
@@ -422,9 +414,7 @@ const BlogList = (props) => {
                       // if already followed, unfollow
                       if (userFollowingList.includes(anchor.name)) {
                         handleUnfollow(anchor.name);
-                        console.log("handleUnfollow");
                       } else {
-                        console.log("handleFollow");
                         handleFollow(anchor.name);
                       }
                     }
